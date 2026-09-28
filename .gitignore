@@ -1,0 +1,33 @@
+# Виртуальное окружение
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Переменные окружения и секреты
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
+
+# Системные файлы Windows
+Thumbs.db
+Desktop.ini
+
+# Логи
+*.log
+
+# Тесты / покрытие
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Временные файлы
+*.tmp
+*.temp
