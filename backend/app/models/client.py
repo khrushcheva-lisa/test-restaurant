@@ -1,13 +1,13 @@
-from sqlalchemy import Column, Integer, String, DateTime, func
-from app.database import Base
+from sqlmodel import SQLModel, Field
+from datetime import date
 
-class Client(Base):
+class Client(SQLModel, table=True):
     __tablename__ = "clients"
 
-    client_id = Column(Integer, primary_key=True)
-    first_name = Column(String)
-    last_name = Column(String)
-    patronymic = Column(String)
-    email = Column(String)
-    phone = Column(String)
-    created_at = Column(DateTime, default=func.now())
+    client_id: int | None = Field(default=None, primary_key=True)
+    first_name: str
+    last_name: str
+    patronymic: str
+    email: str
+    phone: str
+    created_at: date

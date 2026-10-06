@@ -1,33 +1,70 @@
-# Виртуальное окружение
+# =========================
+# Python
+# =========================
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
 .venv/
 venv/
 env/
+ENV/
 
-# Python
-__pycache__/
-*.py[cod]
-*.pyo
+# =========================
+# Environment / secrets
+# =========================
 
-# Переменные окружения и секреты
 .env
 .env.*
+!.env.example
 
+# =========================
 # IDE
+# =========================
+
 .vscode/
 .idea/
 
-# Системные файлы Windows
-Thumbs.db
-Desktop.ini
+# =========================
+# Build / EXE
+# =========================
 
-# Логи
+dist/
+build/
+*.spec
+
+# PyInstaller
+__pycache__/
+*.manifest
+
+# =========================
+# Logs
+# =========================
+
 *.log
 
-# Тесты / покрытие
-.pytest_cache/
-.coverage
-htmlcov/
+# =========================
+# OS
+# =========================
 
-# Временные файлы
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =========================
+# Temporary files
+# =========================
+
 *.tmp
 *.temp
+*.bak
+
+# =========================
+# Database local files
+# =========================
+
+*.db
+*.sqlite
+*.sqlite3

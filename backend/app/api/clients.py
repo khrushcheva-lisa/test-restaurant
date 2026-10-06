@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from sqlmodel import Session, select
 
-from app.database import get_db
+from app.database.database import get_db
 from app.models.client import Client
-from app.schemas.client import ClientResponse, ClientCreate
+from app.schemas.client import *
 
 
 router = APIRouter(
@@ -13,8 +13,8 @@ router = APIRouter(
 
 
 @router.get("/", response_model=list[ClientResponse])
-def get_dishes(db: Session = Depends(get_db)):
-    return db.query(Client).all()
+def get_clients(db: Session = Depends(get_db)):
+    return db.exec(select(Client)).all()
 
 @router.post("/", response_model=ClientResponse)
 def create_client(

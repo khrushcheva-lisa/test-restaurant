@@ -1,14 +1,13 @@
-from sqlalchemy import Column, Integer, String, Boolean, Text
-from app.database import Base
+from sqlmodel import SQLModel, Field
 
 
-class Dish(Base):
+class Dish(SQLModel, table=True):
     __tablename__ = "dishes"
 
-    dish_id = Column(Integer, primary_key=True)
-    category_dishes_id = Column(Integer)   
-    name = Column(String)
-    description = Column(Text)
-    price = Column(Integer)
-    weight_grams = Column(Integer)
-    is_active = Column(Boolean, default=True)
+    dish_id: int | None = Field(default=None, primary_key=True)
+    category_dishes_id: int
+    name: str
+    description: str | None = None
+    price: int
+    weight_grams: int
+    is_active: bool = True
