@@ -2,7 +2,7 @@ from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field
 from app.core.validation import DateTimeValidation
 
-class OrderResponse(DateTimeValidation):
+class OrderResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     order_id: int
     client_id: int
@@ -23,7 +23,7 @@ class OrderCreate(DateTimeValidation):
     created_at: datetime = Field(default_factory=datetime.now, description="Время создания заказа")
 
 
-class OrderUpdate(BaseModel):
+class OrderUpdate(DateTimeValidation):
 
     model_config = ConfigDict(from_attributes=True)
     client_id: int | None = Field(default=None, gt=0, description="ID клиента", examples=[1, 2, 3])

@@ -114,7 +114,7 @@ class ContactValidation(BaseModel):
 
 class DateValidation(BaseModel):
 
-    @field_validator("*", mode="before")
+    @field_validator("created_at", mode="before", check_fields=False)
     @classmethod
     def validate_dates(cls, value):
         """Проверка даты на корректность и диапазон"""
@@ -144,7 +144,7 @@ class DateValidation(BaseModel):
 
 class DateTimeValidation(BaseModel):
 
-    @field_validator("*", mode="before")
+    @field_validator("created_at", "completed_at", mode="before", check_fields=False)
     @classmethod
     def validate_datetime(cls, value):
         """Проверка даты и времени на корректность и диапазон"""
@@ -175,8 +175,10 @@ class DateTimeValidation(BaseModel):
         return value
 
 class PositiveIdValidation(BaseModel):
+    
+    id: int
 
-    @field_validator("*", mode="before")
+    @field_validator("id")
     @classmethod
     def validate_ids(cls, value, info):
 
@@ -227,8 +229,13 @@ def translate_validation_error(error: dict) -> str:
         "value_error": "Введено некорректное значение",
     }
 
-    return messages.get(
-        error_type,
-        "Некорректно заполнено поле"
-    )
+    location = error.get("loc") or ()
+    field_name = str(location[-1]) if location else ""
+    if field_name.endswith("_id") or field_name == "id":
+        if error_type == "greater_than":
+            return "ID должен быть больше нуля"
+        if error_type in {"int_parsing", "int_type"}:
+            return "ID должен быть целым положительным числом"
+
+    return messages.get(error_type, "Некорректно заполнено поле")
 
