@@ -22,6 +22,7 @@ from app.models.orders_model import Order
 from app.models.orders_items_model import OrderItem
 from app.models.waiters_tables_model import WaiterTable
 from app.core.security import hash_password
+from app.database.bootstrap_admin import ensure_admin
 
 logger=logging.getLogger(__name__)
 fake=Faker("ru_RU")
@@ -64,7 +65,6 @@ def seed_database(session: Session):
                 employees.append(Employee(first_name=fake.first_name(),last_name=fake.last_name(),patronymic=fake.middle_name(),phone=fake.unique.phone_number()[:20],email=fake.unique.email(),position_id=pos_id,birth_date=fake.date_of_birth(minimum_age=23,maximum_age=60),hire_date=fake.date_between(start_date="-5y",end_date="today")))
             session.add_all(employees); session.flush()
 
-        # Seed login accounts for generated employees. The shared demo password is intentionally documented.
         role_waiter=role_by_name["waiter"]; role_manager=role_by_name["manager"]
         for employee in session.exec(select(Employee)).all():
             if session.exec(select(User).where(User.employee_id==employee.employee_id)).first(): continue
@@ -75,35 +75,8 @@ def seed_database(session: Session):
             session.add(user); session.flush()
             chosen=role_manager if pos and pos.name=="Менеджер" else role_waiter
             session.add(UserRole(user_id=user.user_id,role_id=chosen.role_id))
-        # One system administrator account; change its password immediately after first login.
-        admin_role = role_by_name["admin"]
-
-        # Находим первого сотрудника для привязки администратора
-        admin_employee = session.exec(select(Employee)).first()
-
-        if admin_employee is None:
-            raise RuntimeError(
-                "Невозможно создать администратора: сначала необходимо создать сотрудника"
-            )
-
-        # Создаём администратора, если его ещё нет
-        if session.exec(select(User).where(User.login == "admin")).first() is None:
-            admin = User(
-                employee_id=admin_employee.employee_id,
-                login="admin",
-                password_hash=hash_password("Admin123!"),
-                is_active=True
-            )
-
-            session.add(admin)
-            session.flush()
-
-            session.add(
-                UserRole(
-                    user_id=admin.user_id,
-                    role_id=admin_role.role_id
-                )
-            )
+        # Проверяем и создаём начального администратора из .env
+        ensure_admin(session)
 
         if not session.exec(select(Client)).first():
             clients=[Client(first_name=fake.first_name(),last_name=fake.last_name(),patronymic=fake.middle_name(),phone=f"+7{fake.unique.random_number(digits=10,fix_len=True)}",email=fake.unique.email(),created_at=fake.date_between(start_date="-2y",end_date="today")) for _ in range(25)]

@@ -12,31 +12,44 @@ class OrderController:
     @staticmethod
     def get_all(session: Session): return get_all(session, Order, "получение заказов")
     @staticmethod
-    def get_by_id(order_id: int, session: Session): return get_one(session, Order, order_id, "получение заказа", "Заказ")
+    def get_by_id(order_id: int, session: Session): 
+        return get_one(session, Order, order_id, "получение заказа", "Заказ")
     @staticmethod
-    def create(data, session: Session): return create_one(session, Order, data, "создание заказа")
+    def create(data, session: Session): 
+        return create_one(session, Order, data, "создание заказа")
     @staticmethod
-    def update(order_id: int, data, session: Session): return update_one(session, Order, order_id, data, "изменение заказа", "Заказ")
+    def update(order_id: int, data, session: Session): 
+        return update_one(session, Order, order_id, data, "изменение заказа", "Заказ")
     @staticmethod
-    def delete(order_id: int, session: Session): return delete_one(session, Order, order_id, "отмена заказа", "Заказ")
+    def delete(order_id: int, session: Session): 
+        return delete_one(session, Order, order_id, "отмена заказа", "Заказ")
     @staticmethod
     def by_client(client_id: int, session: Session):
         try:
-            if session.get(Client, client_id) is None: raise NotFoundError("Клиент с указанным ID не найден")
+            if session.get(Client, client_id) is None: 
+                raise NotFoundError("Клиент с указанным ID не найден")
             return session.exec(select(Order).where(Order.client_id == client_id)).all()
-        except NotFoundError: raise
-        except Exception as exc: rollback_and_raise(session, exc, "получение заказов клиента")
+        except NotFoundError: 
+            raise
+        except Exception as exc: 
+            rollback_and_raise(session, exc, "получение заказов клиента")
     @staticmethod
     def by_waiter(waiter_id: int, session: Session):
         try:
-            if session.get(Employee, waiter_id) is None: raise NotFoundError("Сотрудник с указанным ID не найден")
+            if session.get(Employee, waiter_id) is None: 
+                raise NotFoundError("Сотрудник с указанным ID не найден")
             return session.exec(select(Order).where(Order.waiter_id == waiter_id)).all()
-        except NotFoundError: raise
-        except Exception as exc: rollback_and_raise(session, exc, "получение заказов официанта")
+        except NotFoundError: 
+            raise
+        except Exception as exc: 
+            rollback_and_raise(session, exc, "получение заказов официанта")
     @staticmethod
     def by_table(table_id: int, session: Session):
         try:
-            if session.get(RestaurantTable, table_id) is None: raise NotFoundError("Стол с указанным ID не найден")
+            if session.get(RestaurantTable, table_id) is None: 
+                raise NotFoundError("Стол с указанным ID не найден")
             return session.exec(select(Order).where(Order.table_id == table_id)).all()
-        except NotFoundError: raise
-        except Exception as exc: rollback_and_raise(session, exc, "получение заказов стола")
+        except NotFoundError: 
+            raise
+        except Exception as exc: 
+            rollback_and_raise(session, exc, "получение заказов стола")

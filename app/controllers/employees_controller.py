@@ -7,16 +7,23 @@ from app.controllers.utils import rollback_and_raise
 
 class EmployeeController:
     @staticmethod
-    def get_all(session: Session): return get_all(session, Employee, "получение сотрудников")
+    def get_all(session: Session): 
+        return get_all(session, Employee, "получение сотрудников")
     @staticmethod
-    def get_by_id(employee_id: int, session: Session): return get_one(session, Employee, employee_id, "получение сотрудника", "Сотрудник")
+    def get_by_id(employee_id: int, session: Session): 
+        return get_one(session, Employee, employee_id, "получение сотрудника", "Сотрудник")
     @staticmethod
     def get_by_position(position_name: str, session: Session):
-        try: return session.exec(select(Employee).join(Position).where(Position.name == position_name)).all()
-        except Exception as exc: rollback_and_raise(session, exc, "получение сотрудников по должности")
+        try: 
+            return session.exec(select(Employee).join(Position).where(Position.name == position_name)).all()
+        except Exception as exc: 
+            rollback_and_raise(session, exc, "получение сотрудников по должности")
     @staticmethod
-    def create(data, session: Session): return create_one(session, Employee, data, "создание сотрудника")
+    def create(data, session: Session): 
+        return create_one(session, Employee, data, "создание сотрудника")
     @staticmethod
-    def update(employee_id: int, data, session: Session): return update_one(session, Employee, employee_id, data, "изменение сотрудника", "Сотрудник")
+    def update(employee_id: int, data, session: Session): 
+        return update_one(session, Employee, employee_id, data, "изменение сотрудника", "Сотрудник")
     @staticmethod
-    def delete(employee_id: int, session: Session): return delete_one(session, Employee, employee_id, "удаление сотрудника", "Сотрудник")
+    def delete(employee_id: int, session: Session): 
+        return delete_one(session, Employee, employee_id, "удаление сотрудника", "Сотрудник")

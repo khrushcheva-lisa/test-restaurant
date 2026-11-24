@@ -22,7 +22,8 @@ from app.api.order_items_router import router as order_items_router
 from app.api.menus_router import router as menus_router
 from app.api.users_router import router as users_router
 from app.api.waiters_router import router as waiters_router
-from app.database.init_db import initialize_database
+
+from app.database.database import initialize_database
 
 app = FastAPI(title="Restaurant API", version="1.0.0", description="REST API информационной системы ресторана")
 

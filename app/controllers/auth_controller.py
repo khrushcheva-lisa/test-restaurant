@@ -21,41 +21,55 @@ class AuthController:
             if user is None or not user.is_active or not verify_password(password,user.password_hash):
                 raise UnauthorizedError("Неверный логин или пароль")
             return TokenResponse(access_token=create_access_token(user.user_id),refresh_token=create_refresh_token(user.user_id))
-        except UnauthorizedError: raise
+        except UnauthorizedError: 
+            raise
         except Exception as exc: rollback_and_raise(session,exc,"вход пользователя")
 
     @staticmethod
     def refresh_tokens(refresh_token: str,session: Session):
         try:
             payload=decode_token(refresh_token,expected_type="refresh")
-            if payload is None: raise UnauthorizedError("Недействительный или просроченный refresh-токен")
-            try: user_id=int(payload["sub"])
-            except (ValueError,TypeError,KeyError): raise UnauthorizedError("Некорректный refresh-токен")
+            if payload is None:
+                raise UnauthorizedError("Недействительный или просроченный refresh-токен")
+            try: 
+                user_id=int(payload["sub"])
+            except (ValueError,TypeError,KeyError): 
+                raise UnauthorizedError("Некорректный refresh-токен")
             user=session.get(User,user_id)
-            if user is None or not user.is_active: raise UnauthorizedError("Пользователь не найден или заблокирован")
+            if user is None or not user.is_active: 
+                raise UnauthorizedError("Пользователь не найден или заблокирован")
             return TokenResponse(access_token=create_access_token(user.user_id),refresh_token=create_refresh_token(user.user_id))
-        except UnauthorizedError: raise
-        except Exception as exc: rollback_and_raise(session,exc,"обновление токенов")
+        except UnauthorizedError:
+            raise
+        except Exception as exc: 
+            rollback_and_raise(session,exc,"обновление токенов")
 
     @staticmethod
     def get_current_user(token: str,session: Session):
         try:
             payload=decode_token(token,expected_type="access")
-            if payload is None: raise UnauthorizedError("Недействительный или просроченный токен")
-            try: user_id=int(payload["sub"])
-            except (ValueError,TypeError,KeyError): raise UnauthorizedError("Некорректный токен")
+            if payload is None: 
+                raise UnauthorizedError("Недействительный или просроченный токен")
+            try: 
+                user_id=int(payload["sub"])
+            except (ValueError,TypeError,KeyError): 
+                raise UnauthorizedError("Некорректный токен")
             user=session.get(User,user_id)
-            if user is None or not user.is_active: raise UnauthorizedError("Пользователь не найден или заблокирован")
+            if user is None or not user.is_active: 
+                raise UnauthorizedError("Пользователь не найден или заблокирован")
             return user
-        except UnauthorizedError: raise
-        except Exception as exc: rollback_and_raise(session,exc,"проверка токена")
+        except UnauthorizedError: 
+            raise
+        except Exception as exc: 
+            rollback_and_raise(session,exc,"проверка токена")
 
     @staticmethod
     def get_user_roles(user: User,session: Session) -> set[str]:
         try:
             names=session.exec(select(Role.name).join(UserRole,UserRole.role_id==Role.role_id).where(UserRole.user_id==user.user_id)).all()
             return {name.strip().lower() for name in names}
-        except Exception as exc: rollback_and_raise(session,exc,"получение ролей пользователя")
+        except Exception as exc: 
+            rollback_and_raise(session,exc,"получение ролей пользователя")
 
     @staticmethod
     def create_user(data: UserCreate,session: Session):
@@ -65,10 +79,16 @@ class AuthController:
             if data.employee_id is not None and session.get(Employee,data.employee_id) is None:
                 raise NotFoundError("Сотрудник с указанным ID не найден")
             role=session.get(Role,data.role_id)
-            if role is None: raise NotFoundError("Роль с указанным ID не найдена")
+            if role is None: 
+                raise NotFoundError("Роль с указанным ID не найдена")
             user=User(login=data.login,password_hash=hash_password(data.password),employee_id=data.employee_id)
-            session.add(user);session.flush();session.add(UserRole(user_id=user.user_id,role_id=role.role_id));session.commit();session.refresh(user)
+            session.add(user)
+            session.flush()
+            session.add(UserRole(user_id=user.user_id,role_id=role.role_id))
+            session.commit()
+            session.refresh(user)
             return user
         except (ConflictError,NotFoundError):
-            session.rollback();raise
+            session.rollback()
+            raise
         except Exception as exc: rollback_and_raise(session,exc,"создание пользователя")
