@@ -5,4 +5,4 @@ class Role(SQLModel, table=True):
 
     role_id: int | None = Field(default=None, primary_key=True)
     name: str
-    description: str
+    description: str | None = None

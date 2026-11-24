@@ -13,6 +13,16 @@ from app.api.clients_router import router as clients_router
 from app.api.dishes_categories_router import router as dishes_categories_router
 from app.api.ingredients_router import router as ingredients_router
 from app.api.dishes_ingredients_router import router as dishes_ingredients_router
+from app.api.employees_router import router as employees_router
+from app.api.roles_router import router as roles_router
+from app.api.tables_router import router as tables_router
+from app.api.waiter_tables_router import router as waiter_tables_router
+from app.api.orders_router import router as orders_router
+from app.api.order_items_router import router as order_items_router
+from app.api.menus_router import router as menus_router
+from app.api.users_router import router as users_router
+from app.api.waiters_router import router as waiters_router
+from app.database.init_db import initialize_database
 
 app = FastAPI(title="Restaurant API", version="1.0.0", description="REST API информационной системы ресторана")
 
@@ -22,6 +32,19 @@ app.include_router(clients_router)
 app.include_router(dishes_categories_router)
 app.include_router(ingredients_router)
 app.include_router(dishes_ingredients_router)
+app.include_router(employees_router)
+app.include_router(roles_router)
+app.include_router(tables_router)
+app.include_router(waiter_tables_router)
+app.include_router(orders_router)
+app.include_router(order_items_router)
+app.include_router(menus_router)
+app.include_router(users_router)
+app.include_router(waiters_router)
+
+@app.on_event("startup")
+def on_startup():
+    initialize_database()
 
 @app.get("/", tags=["System"])
 def root():

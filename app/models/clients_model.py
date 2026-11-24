@@ -8,6 +8,6 @@ class Client(SQLModel, table=True):
     first_name: str = Field(min_length=2, max_length=50)
     last_name: str = Field(min_length=2, max_length=50)
     patronymic: str = Field(min_length=2, max_length=50)
-    email: str
-    phone: str
-    created_at: date
+    email: str = Field(unique=True)
+    phone: str = Field(unique=True)
+    created_at: date = Field(default_factory=date.today)

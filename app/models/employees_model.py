@@ -1,6 +1,5 @@
 from sqlmodel import SQLModel, Field
 from datetime import date
-from sqlalchemy import Column, Date
 
 class Employee(SQLModel, table=True):
     __tablename__ = "employees"
@@ -11,6 +10,6 @@ class Employee(SQLModel, table=True):
     patronymic: str
     phone: str
     email: str
-    position_id: str
-    birth_date: date = Field(sa_column=Column("birthdate", Date))
+    position_id: int = Field(foreign_key="positions.position_id")
+    birthdate: date
     hire_date: date

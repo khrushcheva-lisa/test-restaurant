@@ -1,7 +1,24 @@
-python -m venv .venv 
-.venv\Scripts\Activate 
-cd backend  
+# Restaurant API
+
+## Установка и запуск (Windows)
+
+```powershell
+cd backend
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
 uvicorn app.main:app --reload
-http://127.0.0.1:8000/docs
-python run_api.py
-DATABASE_URL=postgresql://user:password@localhost:port/db
+```
+
+Перед запуском настрой `backend/.env` по образцу `.env.example` и укажи свой `DATABASE_URL` и `SECRET_KEY`.
+
+При первом запуске API автоматически создаёт отсутствующие таблицы по текущим SQLModel-моделям и добавляет демонстрационные данные через Faker. Заполнение идемпотентно: если таблица уже содержит данные, повторно её записи не генерируются. Существующие таблицы и данные не удаляются.
+
+## Тестовые учётные записи
+
+- Администратор: `admin` / `Admin123!`
+- Сотрудники: `employee<ID>` / `Restaurant123!` (ID — идентификатор сотрудника)
+
+Это демонстрационные пароли. Измени их после первого входа и не используй в рабочей среде.
+
+Документация API: http://127.0.0.1:8000/docs

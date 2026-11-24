@@ -10,4 +10,4 @@ class Menu(SQLModel, table=True):
     valid_from: date
     valid_to: date
     is_active: bool = Field(default=True)
-    created_at: date = Field(default=date.today())
+    created_at: date = Field(default_factory=date.today)

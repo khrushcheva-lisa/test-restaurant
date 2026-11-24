@@ -50,3 +50,17 @@ def require_roles(*allowed_roles:str):
 manager_or_admin=require_roles("manager","admin","менеджер","администратор")
 waiter_or_manager=require_roles("waiter","manager","admin","официант","менеджер","администратор")
 admin_only=require_roles("admin","администратор")
+
+
+@router.post("/register",response_model=UserRead,status_code=status.HTTP_201_CREATED,summary="Регистрация пользователя (только admin)")
+def register(data:UserCreate,db:Session=Depends(get_db),admin:User=Depends(get_current_user)):
+    try:
+        if not AuthController.get_user_roles(admin,db).intersection({"admin","администратор"}):
+            raise ForbiddenError("Регистрировать пользователей может только администратор")
+        return AuthController.create_user(data,db)
+    except Exception as exc:raise controller_http_error(exc)
+
+@router.post("/logout",status_code=status.HTTP_204_NO_CONTENT,summary="Выход из системы")
+def logout(user:User=Depends(get_current_user)):
+    # JWT is stateless: the client must discard both tokens after this response.
+    return None
